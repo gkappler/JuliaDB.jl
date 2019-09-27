@@ -81,12 +81,15 @@ function Base.join(f, left::DDataset, right::DDataset;
         c1 = l.chunks[i]
         c2 = r.chunks[j]
 
-        d1 = l.domains[i]
-        d2 = r.domains[j]
-        if hasoverlap(d1.interval, d2.interval)
+        pkey_tuple(nt,pkey) = tuple( ( getproperty(nt,n) for n in pkey )... )
+        pkey_domain(d,pkey) =
+            Interval(pkey_tuple(first(d),pkey),pkey_tuple(last(d),pkey))
+        d1 = pkey_domain(l.domains[i].interval, lkey)
+        d2 = pkey_domain(r.domains[j].interval, rkey)
+        if hasoverlap(d1, d2)
             i += 1
             j += 1
-        elseif last(d1.interval) < last(d2.interval)
+        elseif last(d1) < last(d2)
             # this means there's no corresponding chunk on the right
             c2 = rempty
             i += 1
