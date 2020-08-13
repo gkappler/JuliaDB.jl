@@ -167,6 +167,12 @@ function _merge!(prevchunks, newchunks; output)
     x
 end
 
+
+dndsparse(x::NDSparse; output=nothing, chunks) =
+    let r=ndsparse(keys(x), values(x); chunks=chunks)
+        output !== nothing ? save(r, output) : r
+    end
+
 """
     Base.merge!(dst::JuliaDB.DNDSparse,src::NDSparse; output=nothing)
 
